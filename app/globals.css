@@ -78,8 +78,8 @@
 .agree-row{margin:19px 0 21px}
 .booking-form .agree-row .agree{margin:0}
 .privacy-link{display:inline-block;margin:5px 0 0 24px;color:#245bc3;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
-.footer-privacy{display:inline-block;margin-top:20px;color:#eef4ff;font-size:13px;text-decoration:underline;text-underline-offset:3px}
-.footer-admin{display:inline-block;margin-top:13px;color:#dce8ff;text-decoration:underline;text-underline-offset:3px}
+.footer-privacy{display:inline-block;margin-top:20px;color:#eef4ff;font-size:13px;text-decoration:none}
+.footer-admin{display:inline-block;margin-top:13px;color:#dce8ff;text-decoration:none}
 .policy-page{min-height:100vh;background:#f5f7fb;color:#172235}
 .policy-header{height:78px;background:#102d62;color:#fff;padding:0 max(5%,calc((100% - 1060px)/2));display:flex;align-items:center;justify-content:space-between}
 .policy-header>a:first-child{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800}
