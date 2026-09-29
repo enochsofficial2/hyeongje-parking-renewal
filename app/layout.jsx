@@ -1,9 +1,10 @@
 import './globals.css';
 
 export const metadata = {
-  metadataBase: new URL('https://hyeongje-parking.vercel.app'),
+  metadataBase: new URL('https://www.hjairport.com'),
   title: '형제주차장 김해공항점 | 김해공항 주차 예약',
   description: '김해공항 형제주차장. 무료 셔틀, 주차 요금 안내, 온라인 예약 신청.',
+  alternates: { canonical: '/' },
   openGraph: {
     title: '형제주차장 김해공항점 | 김해공항 주차 예약',
     description: '차는 편하게, 여행은 가볍게. 형제주차장 김해공항점 온라인 예약.',
