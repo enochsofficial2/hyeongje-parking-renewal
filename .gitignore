@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.next/
+.vercel/
+.env*
+.playwriter-eval.js
+
+.vercel
+.env*
+.vercel-cli/
