@@ -40,7 +40,8 @@
 .scroll-cue .scroll-chevron{display:block;width:19px;height:19px;object-fit:contain;margin-top:-10px}
 .faq-plus{width:19px;height:19px;object-fit:contain;transition:transform .2s}
 .faq-list details[open] .faq-plus{transform:rotate(45deg)}
-.floating-call{display:inline-flex;align-items:center;gap:8px;padding:9px 20px 9px 10px;transition:transform .2s,box-shadow .2s}
+.floating-call{display:inline-flex;align-items:center;gap:8px;padding:9px 20px 9px 10px;transition:transform .2s,box-shadow .2s,opacity .2s}
+.floating-call.is-hidden{opacity:0;pointer-events:none;transform:translateY(12px)}
 .floating-call:hover{transform:translateY(-3px);box-shadow:0 12px 24px #102e6880}
 .floating-call .support-icon{display:block;width:37px;height:37px;object-fit:contain;filter:drop-shadow(0 2px 5px #071f7390)}
 @media(max-width:530px){.floating-call{padding:7px 14px 7px 8px}.floating-call .support-icon{width:32px;height:32px}}
@@ -78,6 +79,7 @@
 .agree-row{margin:19px 0 21px}
 .booking-form .agree-row .agree{margin:0}
 .privacy-link{display:inline-block;margin:5px 0 0 24px;color:#245bc3;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:530px){.booking-form .agree{font-size:13px}.privacy-link{font-size:13px}}
 .footer-privacy{display:inline-block;margin-top:20px;color:#eef4ff;font-size:13px;text-decoration:none}
 .footer-admin{display:inline-block;margin-top:13px;color:#dce8ff;text-decoration:none}
 .policy-page{min-height:100vh;background:#f5f7fb;color:#172235}
