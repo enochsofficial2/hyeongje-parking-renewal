@@ -1,1 +1,5 @@
-import Board from './Board';export const revalidate=300;export const metadata={title:'이용후기 | 형제주차장 김해공항점',description:'김해공항 앞 차량 인수·반납과 형제주차장 이용 고객 후기.',alternates:{canonical:'/reviews'}};export default function Reviews(){return <Board/>}
+import Board from './Board';
+import {boardMetadata} from '../../lib/review-seo';
+export const revalidate=300;
+export async function generateMetadata(){return boardMetadata()}
+export default function Reviews(){return <Board/>}

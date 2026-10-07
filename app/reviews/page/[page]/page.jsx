@@ -1,1 +1,8 @@
-import Board from '../../Board';import {notFound,permanentRedirect} from 'next/navigation';export const revalidate=300;export function generateStaticParams(){return []}export async function generateMetadata({params}){const {page}=await params;return {title:'이용후기 '+page+'페이지 | 형제주차장',alternates:{canonical:'/reviews/page/'+page}}}export default async function Reviews({params}){const {page}=await params;if(!/^[1-9]\d*$/.test(page))notFound();if(page==='1')permanentRedirect('/reviews');return <Board page={Number(page)}/>}
+import Board from '../../Board';
+import {notFound,permanentRedirect} from 'next/navigation';
+import {boardMetadata} from '../../../../lib/review-seo';
+export const revalidate=300;
+export function generateStaticParams(){return []}
+function pageNumber(value){if(!/^[1-9]\d*$/.test(value)||!Number.isSafeInteger(Number(value)))notFound();return Number(value)}
+export async function generateMetadata({params}){const {page}=await params;return boardMetadata(pageNumber(page))}
+export default async function Reviews({params}){const {page}=await params;const number=pageNumber(page);if(number===1)permanentRedirect('/reviews');return <Board page={number}/>}
