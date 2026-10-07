@@ -5,7 +5,7 @@ export const metadata = {
   verification:{other:{'naver-site-verification':'4ddca78d0bb63c35d54f62c79adb7664dc6982f2'}},
   metadataBase: new URL('https://www.hjairport.com'),
   title: '형제주차장 김해공항점 | 김해공항 주차 예약',
-  description: '김해공항 형제주차장. 무료 셔틀, 주차 요금 안내, 온라인 예약 신청.',
+  description: '김해공항 형제주차장. 공항 앞 고객 차량 인수·반납, 주차 요금 안내, 온라인 예약 신청.',
   alternates: { canonical: '/' },
   icons:{icon:[{url:'/favicon.ico',sizes:'128x128',type:'image/x-icon'},{url:'/favicon.png',sizes:'128x128',type:'image/png'}],apple:'/favicon.png'},
   openGraph: {

@@ -1,3 +1,4 @@
+import {revalidatePath,revalidateTag} from 'next/cache';
 // Same-origin proxy keeps administrator sessions in HttpOnly cookies on Vercel.
 import bcrypt from 'bcryptjs';
 export const dynamic = 'force-dynamic';
@@ -32,6 +33,7 @@ async function proxy(request, context) {
   const response = await fetch(`${base}/api/${path.map(encodeURIComponent).join('/')}${url.search}`,{
     method:request.method,headers,body:['GET','HEAD'].includes(request.method)?undefined:await request.arrayBuffer(),redirect:'manual',cache:'no-store'
   });
+  if(response.ok&&path[0]==='admin'&&path[1]==='reviews'&&request.method!=='GET'){revalidateTag('reviews',{expire:0});revalidatePath('/reviews','layout');revalidatePath('/sitemap.xml');}
   const output=new Headers({'Cache-Control':'no-store'});
   for(const name of ['content-type','set-cookie','content-disposition']) if(response.headers.has(name))output.set(name,response.headers.get(name));
   return new Response(response.body,{status:response.status,headers:output});

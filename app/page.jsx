@@ -1,17 +1,19 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import SiteHeader from './SiteHeader';
+import CarDeparture from './CarDeparture';
 import { api } from '../lib/api';
 import { readJourney,track } from '../lib/attribution';
 
 const features = [
-  ['01','김해공항 가까이, 편안한 출발','공항 근처 형제주차장에 차를 세우고 가벼운 마음으로 여행을 시작하세요.\n처음 방문하셔도 입차 방법을 차근차근 안내해 드립니다.','/airport-parking-hero.webp','공항 주차를 표현한 연출 이미지'],
-  ['02','공항까지 무료 셔틀 운행','주차를 마친 뒤 김해공항까지 무료 셔틀로\n이동하세요. 귀국 후에도 전화 한 통으로 돌아오는 길을 안내받으실 수 있습니다.','/parking-4.jpg','형제주차장 무료 셔틀 차량'],
+  ['01','김해공항 가까이, 편안한 출발','김해공항 앞에서 고객 차량을 맡기고 가벼운 마음으로 여행을 시작하세요.\n직원이 차량을 인수해 주차장으로 이동합니다.','/airport-parking-hero.webp','공항 주차를 표현한 연출 이미지'],
+  ['02','공항 앞 차량 인수·반납','출국 시 김해공항 앞에서 차량을 인수합니다.\n귀국 후 연락해 주시면 고객 차량을 공항 앞으로 가져다드립니다.','/guide-step-2.png','공항 앞 차량 인수 안내 연출 이미지'],
   ['03','차량을 위한 세심한 관리','형제주차장의 보안 설비를 살펴보세요.\n차량을 맡기는 순간부터 찾는 순간까지 편안한 이용을 돕겠습니다.','/parking-3.jpg','형제주차장 CCTV 설비'],
 ];
 const faqs = [
   ['온라인 예약 후 바로 확정되나요?','예약 신청을 보내주시면 담당자가 일정을 확인한 후 안내드립니다. 확정 안내를 받으셔야 예약이 완료됩니다.'],
-  ['주차장 위치는 어디인가요?','부산광역시 강서구 대저2동 2432-4입니다. 방문 전 입차 안내를 확인해 주세요.'],
-  ['무료 셔틀은 어떻게 이용하나요?','주차 후 김해공항까지 무료 셔틀을 이용하실 수 있습니다. 귀국 후에는 010-5700-7884로 연락해 주세요.'],
+  ['주차장 위치는 어디인가요?','부산광역시 강서구 대저2동 2432-4입니다. 차량 인수·반납은 김해공항 앞에서 진행하며 만남 위치는 담당자가 안내합니다.'],
+  ['차량은 어디서 맡기고 찾나요?','김해공항 앞에서 직원이 고객 차량을 인수하고, 귀국 시 공항 앞으로 차량을 가져다드립니다. 구체적인 만남 위치는 담당자의 안내를 확인해 주세요.'],
   ['예약 가능한 최소 기간이 있나요?','온라인 예약은 3일 이상 이용하실 때 신청할 수 있습니다. 짧은 일정은 전화로 문의해 주세요.'],
 ];
 function AnimatedPrice({ target }) {
@@ -42,7 +44,6 @@ function AnimatedPrice({ target }) {
   return <strong ref={numberRef}>{value.toLocaleString('ko-KR')}</strong>;
 }
 export default function HomePage({reservationOnly=false}) {
-  const [menuOpen,setMenuOpen] = useState(false);
   const [showScrollCue,setShowScrollCue] = useState(true);
   const [showFloatingCall,setShowFloatingCall] = useState(true);
   const [statusMessage,setStatusMessage] = useState('예약 신청 후 담당자의 확정 안내를 확인해 주세요.');
@@ -95,20 +96,14 @@ export default function HomePage({reservationOnly=false}) {
     finally {submittingRef.current=false;setSubmitting(false);}
   }
   return <>
-    <header className="site-header"><div className="header-inner">
-      <a className="logo" href="/" aria-label="형제주차장 홈"><span className="logo-symbol">P<img src="/logo-airplane.webp" alt=""/></span><span className="logo-type">형제주차장<small>HYEONGJE PARKING</small></span></a>
-      <nav className={menuOpen?'site-nav open':'site-nav'} aria-label="주요 메뉴">
-        {['회사소개','이용안내','요금안내','예약하기','주차장시설','고객지원'].map((label,i)=><a key={label} onClick={()=>setMenuOpen(false)} href={['/about','/guide','/pricing','/reservation','/facilities','/faq'][i]}>{label}</a>)}
-      </nav><a className="header-call" href="tel:01057007884">전화 상담&nbsp; 010-5700-7884</a>
-      <button className="menu-toggle" aria-label={menuOpen?'메뉴 닫기':'메뉴 열기'} aria-expanded={menuOpen} onClick={()=>setMenuOpen(!menuOpen)}><img src={menuOpen?'/icon-close.webp':'/icon-menu.webp'} alt=""/></button>
-    </div></header>
+    <SiteHeader overlay={!reservationOnly}/>
     <main id="top">
       {!reservationOnly&&<><section className="hero"><div className="hero-content"><p>여행의 시작부터 끝까지,<br/>김해공항 주차의 편안한 선택</p><h1>HYEONGJE PARKING</h1><a className="primary-button" href="#reservation">온라인 예약하기 <img className="button-icon" src="/icon-arrow.webp" alt=""/></a></div><a className={showScrollCue?'scroll-cue':'scroll-cue hidden'} href="#about" aria-label="아래로 스크롤하여 소개 보기"><span className="scroll-label">SCROLL TO EXPLORE</span><span className="mouse-scene" aria-hidden="true"><span className="mouse-shell"><span className="mouse-seam"/><span className="mouse-wheel"/></span><span className="mouse-shadow"/></span><img className="scroll-chevron" src="/icon-chevron.webp" alt=""/></a></section>
       <section className="intro" id="about"><span className="eyebrow">김해공항 주차의 편안한 시작</span><h2>공항까지 가볍게,<br/>주차는 형제주차장에</h2><p>여행 전 주차부터 귀국 후 차량 인수까지<br/>믿고 맡길 수 있도록 정성을 다하겠습니다.</p></section>
       <section className="feature-list" id="guide" aria-label="형제주차장 이용 장점">{features.map(([num,title,description,image,alt])=><article className="feature-row" key={num}><div className="feature-copy"><span className="feature-number">{num}</span><h3>{title}</h3><p>{description}</p></div><div className="feature-image"><img src={image} alt={alt}/></div></article>)}</section>
       <section className="pricing" id="pricing"><div className="section-heading"><span className="eyebrow">PARKING PRICE</span><h2>명확한 주차 요금</h2><p>이용 일정을 확인하고 안내해 드립니다.</p></div><div className="price-grid"><article className="price-card"><span>WEEKDAY</span><h3>월요일 — 목요일</h3><div className="price"><AnimatedPrice target={9000}/>원 <small>/ 1일</small></div></article><article className="price-card"><span>WEEKEND</span><h3>금요일 — 일요일</h3><div className="price"><AnimatedPrice target={10000}/>원 <small>/ 1일</small></div></article></div><p className="price-note">정확한 총 요금과 공휴일 적용 요금은 예약 확정 시 안내드립니다.</p></section>
-      <section className="how-to"><div className="section-heading"><span className="eyebrow">HOW TO USE</span><h2>이용 방법</h2><p>예약부터 귀국까지, 간단하게 이용하세요.</p></div><div className="how-grid">{[['온라인 예약','이용 일정과 차량 정보를 입력하고 예약을 신청하세요.'],['주차장 방문','확정 안내를 확인한 뒤 형제주차장으로 방문하세요.'],['무료 셔틀 이용','주차를 마치고 셔틀로 김해공항까지 이동하세요.'],['귀국 후 차량 인수','도착 후 전화 주시면 돌아오는 길을 안내해 드립니다.']].map(([title,copy],i)=><article key={title}><span>0{i+1}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></section>
-      <section className="facilities" id="facilities"><div className="section-heading"><span className="eyebrow">OUR PARKING LOT</span><h2>형제주차장 둘러보기</h2><p>실제 셔틀 차량과 주차장 설비를 확인하세요.</p></div><div className="gallery"><img src="/parking-4.jpg" alt="형제주차장 무료 셔틀 차량"/><img src="/parking-3.jpg" alt="형제주차장 CCTV 설비"/><a className="map-link" href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%8C%80%EC%A0%802%EB%8F%99%202432-4" target="_blank" rel="noopener noreferrer" aria-label="형제주차장 위치 네이버 지도에서 보기"><img src="/parking-5.jpg" alt="형제주차장 위치 안내 지도"/><small>클릭 시 네이버 지도로 이동합니다.</small></a></div></section>
+      <section className="how-to"><div className="section-heading"><span className="eyebrow">HOW TO USE</span><h2>이용 방법</h2><p>예약부터 귀국까지, 간단하게 이용하세요.</p></div><div className="how-grid">{[['온라인 예약','이용 일정과 차량 정보를 입력하고 예약을 신청하세요.'],['공항 앞 차량 인수','확정 안내에 따라 김해공항 앞에서 직원에게 차량을 맡기세요.'],['주차장 보관','직원이 고객 차량을 주차장으로 이동해 보관합니다.'],['공항 앞 차량 반납','귀국 후 연락 주시면 고객 차량을 공항 앞으로 가져다드립니다.']].map(([title,copy],i)=><article key={title}><span>0{i+1}</span><h3>{title}</h3><p>{copy}</p></article>)}</div><CarDeparture/></section>
+      <section className="facilities" id="facilities"><div className="section-heading"><span className="eyebrow">OUR PARKING LOT</span><h2>형제주차장 둘러보기</h2><p>실제 운영 차량과 주차장 설비를 확인하세요.</p></div><div className="gallery"><img src="/parking-4.jpg" alt="형제주차장 운영 차량"/><img src="/parking-3.jpg" alt="형제주차장 CCTV 설비"/><a className="map-link" href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%8C%80%EC%A0%802%EB%8F%99%202432-4" target="_blank" rel="noopener noreferrer" aria-label="형제주차장 위치 네이버 지도에서 보기"><img src="/parking-5.jpg" alt="형제주차장 위치 안내 지도"/><small>클릭 시 네이버 지도로 이동합니다.</small></a></div></section>
       </>}{reservationOnly&&<h1 className="booking-page-title">김해공항 주차 온라인 예약</h1>}<section className="booking" id="reservation"><div className="booking-intro"><span className="eyebrow">ONLINE RESERVATION</span><h2>여행 준비의 시작,<br/>지금 예약하세요.</h2><p>필요한 정보를 남겨주시면 확인 후 연락드리겠습니다. 담당자의 안내를 받으신 뒤 예약이 확정됩니다.</p><div className="booking-info"><strong>운영시간</strong><span>매일 04:40 – 21:30</span><strong>전화문의</strong><a href="tel:01057007884">010-5700-7884</a></div></div>
       <form className="booking-form" onSubmit={handleSubmit} aria-busy={submitting}><h3>온라인 예약 신청</h3><p>별표 표시 항목을 입력해 주세요.</p>
         {(submitting||receipt)&&<div className="booking-receipt" role="status">{submitting?<><span className="booking-spinner"/><div><strong>예약 접수 중</strong><span>잠시만 기다려 주세요.</span></div></>:<><span className="booking-check">✓</span><div><strong>{receipt.name}님, 예약 신청이 접수되었습니다.</strong><span>담당자가 확인한 후 확정 안내를 드립니다.</span><small>접수번호 {receipt.id.slice(0,8).toUpperCase()}</small></div></>}</div>}
@@ -124,7 +119,7 @@ export default function HomePage({reservationOnly=false}) {
       {!reservationOnly&&<><section className="faq" id="faq"><div className="section-heading"><span className="eyebrow">FAQ</span><h2>자주 묻는 질문</h2><p>궁금한 내용을 확인해 보세요.</p></div><div className="faq-list">{faqs.map(([q,a])=><details key={q}><summary>{q}<img className="faq-plus" src="/icon-plus.webp" alt=""/></summary><p>{a}</p></details>)}</div></section>
       <section className="closing"><h2>여행의 시작도 끝도,<br/>형제주차장과 함께</h2><a className="primary-button" href="#reservation">온라인 예약하기 <img className="button-icon" src="/icon-arrow.webp" alt=""/></a></section>
 </>}    </main>
-    <footer className="footer"><div className="footer-inner"><div><a className="footer-logo" href="/">형제주차장 <small>HYEONGJE PARKING</small></a><p>부산광역시 강서구 대저2동 2432-4<br/>운영시간 04:40 – 21:30</p><nav className="footer-pages" aria-label="사이트 안내">{[["/about","회사소개"],["/guide","이용안내"],["/pricing","요금안내"],["/reservation","온라인예약"],["/facilities","주차장시설"],["/faq","자주 묻는 질문"]].map(([href,title])=><a key={href} href={href}>{title}</a>)}</nav><a className="footer-privacy" href="/privacy">개인정보 처리방침</a></div><div><strong>고객센터</strong><a className="footer-phone" href="tel:01057007884">010-5700-7884</a><p>예약 및 이용 문의는 전화로 연락해 주세요.<br/><a className="footer-admin" href="/admin">관리자 페이지</a></p></div></div><div className="copyright">© 2026 HYEONGJE PARKING. ALL RIGHTS RESERVED.</div></footer>
+    <footer className="footer"><div className="footer-inner"><div><a className="footer-logo" href="/">형제주차장 <small>HYEONGJE PARKING</small></a><p>부산광역시 강서구 대저2동 2432-4<br/>운영시간 04:40 – 21:30</p><nav className="footer-pages" aria-label="사이트 안내">{[["/about","회사소개"],["/guide","이용안내"],["/pricing","요금안내"],["/reservation","온라인예약"],["/reviews","이용후기"],["/faq","자주 묻는 질문"]].map(([href,title])=><a key={href} href={href}>{title}</a>)}</nav><a className="footer-privacy" href="/privacy">개인정보 처리방침</a></div><div><strong>고객센터</strong><a className="footer-phone" href="tel:01057007884">010-5700-7884</a><p>예약 및 이용 문의는 전화로 연락해 주세요.<br/><a className="footer-admin" href="/admin">관리자 페이지</a></p></div></div><div className="copyright">© 2026 HYEONGJE PARKING. ALL RIGHTS RESERVED.</div></footer>
     <a className={showFloatingCall?'floating-call':'floating-call is-hidden'} href="tel:01057007884" aria-hidden={!showFloatingCall} tabIndex={showFloatingCall?undefined:-1}><img className="support-icon" src="/support-headset.webp" alt=""/>상담원 연결</a>
   </>;
 }
