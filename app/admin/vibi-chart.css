@@ -1,0 +1,627 @@
+/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+.vibi-traffic-chart {
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+  --color-amber-50: oklch(98.7% 0.022 95.277);
+  --color-amber-100: oklch(96.2% 0.059 95.617);
+  --color-amber-500: oklch(76.9% 0.188 70.08);
+  --color-amber-600: oklch(66.6% 0.179 58.318);
+  --color-amber-700: oklch(55.5% 0.163 48.998);
+  --color-yellow-300: oklch(90.5% 0.182 98.111);
+  --color-yellow-600: oklch(68.1% 0.162 75.834);
+  --color-green-50: oklch(98.2% 0.018 155.826);
+  --color-green-100: oklch(96.2% 0.044 156.743);
+  --color-green-500: oklch(72.3% 0.219 149.579);
+  --color-green-600: oklch(62.7% 0.194 149.214);
+  --color-blue-400: oklch(70.7% 0.165 254.624);
+  --color-blue-500: oklch(62.3% 0.214 259.815);
+  --color-slate-700: oklch(37.2% 0.044 257.287);
+  --color-slate-900: oklch(20.8% 0.042 265.755);
+  --color-gray-50: oklch(98.5% 0.002 247.839);
+  --color-gray-100: oklch(96.7% 0.003 264.542);
+  --color-gray-300: oklch(87.2% 0.01 258.338);
+  --color-gray-400: oklch(70.7% 0.022 261.325);
+  --color-gray-500: oklch(55.1% 0.027 264.364);
+  --color-gray-700: oklch(37.3% 0.034 259.733);
+  --color-gray-900: oklch(21% 0.034 264.665);
+  --color-white: #fff;
+  --spacing: 0.25rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: calc(1 / 0.75);
+  --text-sm: 0.875rem;
+  --text-sm--line-height: calc(1.25 / 0.875);
+  --text-lg: 1.125rem;
+  --text-lg--line-height: calc(1.75 / 1.125);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --blur-sm: 8px;
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vibi-traffic-chart .pointer-events-none, .vibi-traffic-chart.pointer-events-none {
+  pointer-events: none;
+}
+.vibi-traffic-chart .absolute, .vibi-traffic-chart.absolute {
+  position: absolute;
+}
+.vibi-traffic-chart .relative, .vibi-traffic-chart.relative {
+  position: relative;
+}
+.vibi-traffic-chart .z-20, .vibi-traffic-chart.z-20 {
+  z-index: 20;
+}
+.vibi-traffic-chart .col-span-2, .vibi-traffic-chart.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+.vibi-traffic-chart .mt-1, .vibi-traffic-chart.mt-1 {
+  margin-top: var(--spacing);
+}
+.vibi-traffic-chart .ml-auto, .vibi-traffic-chart.ml-auto {
+  margin-left: auto;
+}
+.vibi-traffic-chart .flex, .vibi-traffic-chart.flex {
+  display: flex;
+}
+.vibi-traffic-chart .grid, .vibi-traffic-chart.grid {
+  display: grid;
+}
+.vibi-traffic-chart .hidden, .vibi-traffic-chart.hidden {
+  display: none;
+}
+.vibi-traffic-chart .h-1\.5, .vibi-traffic-chart.h-1\.5 {
+  height: calc(var(--spacing) * 1.5);
+}
+.vibi-traffic-chart .h-2, .vibi-traffic-chart.h-2 {
+  height: calc(var(--spacing) * 2);
+}
+.vibi-traffic-chart .w-1\.5, .vibi-traffic-chart.w-1\.5 {
+  width: calc(var(--spacing) * 1.5);
+}
+.vibi-traffic-chart .w-2, .vibi-traffic-chart.w-2 {
+  width: calc(var(--spacing) * 2);
+}
+.vibi-traffic-chart .w-full, .vibi-traffic-chart.w-full {
+  width: 100%;
+}
+.vibi-traffic-chart .min-w-\[136px\], .vibi-traffic-chart.min-w-\[136px\] {
+  min-width: 136px;
+}
+.vibi-traffic-chart .shrink-0, .vibi-traffic-chart.shrink-0 {
+  flex-shrink: 0;
+}
+.vibi-traffic-chart .transform, .vibi-traffic-chart.transform {
+  transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+}
+.vibi-traffic-chart .animate-pulse, .vibi-traffic-chart.animate-pulse {
+  animation: var(--animate-pulse);
+}
+.vibi-traffic-chart .cursor-pointer, .vibi-traffic-chart.cursor-pointer {
+  cursor: pointer;
+}
+.vibi-traffic-chart .touch-pan-y, .vibi-traffic-chart.touch-pan-y {
+  --tw-pan-y: pan-y;
+  touch-action: var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,);
+}
+.vibi-traffic-chart .grid-cols-2, .vibi-traffic-chart.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.vibi-traffic-chart .flex-wrap, .vibi-traffic-chart.flex-wrap {
+  flex-wrap: wrap;
+}
+.vibi-traffic-chart .items-center, .vibi-traffic-chart.items-center {
+  align-items: center;
+}
+.vibi-traffic-chart .justify-between, .vibi-traffic-chart.justify-between {
+  justify-content: space-between;
+}
+.vibi-traffic-chart .justify-center, .vibi-traffic-chart.justify-center {
+  justify-content: center;
+}
+.vibi-traffic-chart .gap-1, .vibi-traffic-chart.gap-1 {
+  gap: var(--spacing);
+}
+.vibi-traffic-chart .gap-1\.5, .vibi-traffic-chart.gap-1\.5 {
+  gap: calc(var(--spacing) * 1.5);
+}
+.vibi-traffic-chart .gap-2, .vibi-traffic-chart.gap-2 {
+  gap: calc(var(--spacing) * 2);
+}
+.vibi-traffic-chart .gap-3, .vibi-traffic-chart.gap-3 {
+  gap: calc(var(--spacing) * 3);
+}
+.vibi-traffic-chart .gap-4, .vibi-traffic-chart.gap-4 {
+  gap: calc(var(--spacing) * 4);
+}
+.vibi-traffic-chart :where(.space-y-0\.5 > :not(:last-child)) {
+  --tw-space-y-reverse: 0;
+  margin-block-start: calc(calc(var(--spacing) * 0.5) * var(--tw-space-y-reverse));
+  margin-block-end: calc(calc(var(--spacing) * 0.5) * calc(1 - var(--tw-space-y-reverse)));
+}
+.vibi-traffic-chart :where(.space-y-2 > :not(:last-child)) {
+  --tw-space-y-reverse: 0;
+  margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
+  margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+}
+.vibi-traffic-chart :where(.space-y-3 > :not(:last-child)) {
+  --tw-space-y-reverse: 0;
+  margin-block-start: calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));
+  margin-block-end: calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)));
+}
+.vibi-traffic-chart :where(.space-y-5 > :not(:last-child)) {
+  --tw-space-y-reverse: 0;
+  margin-block-start: calc(calc(var(--spacing) * 5) * var(--tw-space-y-reverse));
+  margin-block-end: calc(calc(var(--spacing) * 5) * calc(1 - var(--tw-space-y-reverse)));
+}
+.vibi-traffic-chart .rounded-full, .vibi-traffic-chart.rounded-full {
+  border-radius: calc(infinity * 1px);
+}
+.vibi-traffic-chart .rounded-lg, .vibi-traffic-chart.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.vibi-traffic-chart .rounded-md, .vibi-traffic-chart.rounded-md {
+  border-radius: var(--radius-md);
+}
+.vibi-traffic-chart .rounded-xl, .vibi-traffic-chart.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+.vibi-traffic-chart .border, .vibi-traffic-chart.border {
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+}
+.vibi-traffic-chart .border-b, .vibi-traffic-chart.border-b {
+  border-bottom-style: var(--tw-border-style);
+  border-bottom-width: 1px;
+}
+.vibi-traffic-chart .border-amber-100, .vibi-traffic-chart.border-amber-100 {
+  border-color: var(--color-amber-100);
+}
+.vibi-traffic-chart .border-gray-100, .vibi-traffic-chart.border-gray-100 {
+  border-color: var(--color-gray-100);
+}
+.vibi-traffic-chart .border-green-100, .vibi-traffic-chart.border-green-100 {
+  border-color: var(--color-green-100);
+}
+.vibi-traffic-chart .border-slate-700\/60, .vibi-traffic-chart.border-slate-700\/60 {
+  border-color: color-mix(in srgb, oklch(37.2% 0.044 257.287) 60%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    border-color: color-mix(in oklab, var(--color-slate-700) 60%, transparent);
+  }
+}
+.vibi-traffic-chart .border-white\/10, .vibi-traffic-chart.border-white\/10 {
+  border-color: color-mix(in srgb, #fff 10%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    border-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+  }
+}
+.vibi-traffic-chart .bg-\[\#fc1c49\], .vibi-traffic-chart.bg-\[\#fc1c49\] {
+  background-color: #fc1c49;
+}
+.vibi-traffic-chart .bg-amber-50, .vibi-traffic-chart.bg-amber-50 {
+  background-color: var(--color-amber-50);
+}
+.vibi-traffic-chart .bg-amber-500, .vibi-traffic-chart.bg-amber-500 {
+  background-color: var(--color-amber-500);
+}
+.vibi-traffic-chart .bg-blue-400, .vibi-traffic-chart.bg-blue-400 {
+  background-color: var(--color-blue-400);
+}
+.vibi-traffic-chart .bg-blue-500, .vibi-traffic-chart.bg-blue-500 {
+  background-color: var(--color-blue-500);
+}
+.vibi-traffic-chart .bg-gray-50, .vibi-traffic-chart.bg-gray-50 {
+  background-color: var(--color-gray-50);
+}
+.vibi-traffic-chart .bg-gray-100, .vibi-traffic-chart.bg-gray-100 {
+  background-color: var(--color-gray-100);
+}
+.vibi-traffic-chart .bg-green-50, .vibi-traffic-chart.bg-green-50 {
+  background-color: var(--color-green-50);
+}
+.vibi-traffic-chart .bg-green-500, .vibi-traffic-chart.bg-green-500 {
+  background-color: var(--color-green-500);
+}
+.vibi-traffic-chart .bg-slate-900\/95, .vibi-traffic-chart.bg-slate-900\/95 {
+  background-color: color-mix(in srgb, oklch(20.8% 0.042 265.755) 95%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    background-color: color-mix(in oklab, var(--color-slate-900) 95%, transparent);
+  }
+}
+.vibi-traffic-chart .bg-white, .vibi-traffic-chart.bg-white {
+  background-color: var(--color-white);
+}
+.vibi-traffic-chart .fill-gray-400, .vibi-traffic-chart.fill-gray-400 {
+  fill: var(--color-gray-400);
+}
+.vibi-traffic-chart .fill-gray-500, .vibi-traffic-chart.fill-gray-500 {
+  fill: var(--color-gray-500);
+}
+.vibi-traffic-chart .fill-yellow-600, .vibi-traffic-chart.fill-yellow-600 {
+  fill: var(--color-yellow-600);
+}
+.vibi-traffic-chart .p-1, .vibi-traffic-chart.p-1 {
+  padding: var(--spacing);
+}
+.vibi-traffic-chart .p-3, .vibi-traffic-chart.p-3 {
+  padding: calc(var(--spacing) * 3);
+}
+.vibi-traffic-chart .p-4, .vibi-traffic-chart.p-4 {
+  padding: calc(var(--spacing) * 4);
+}
+.vibi-traffic-chart .px-2, .vibi-traffic-chart.px-2 {
+  padding-inline: calc(var(--spacing) * 2);
+}
+.vibi-traffic-chart .px-3, .vibi-traffic-chart.px-3 {
+  padding-inline: calc(var(--spacing) * 3);
+}
+.vibi-traffic-chart .py-0\.5, .vibi-traffic-chart.py-0\.5 {
+  padding-block: calc(var(--spacing) * 0.5);
+}
+.vibi-traffic-chart .py-1\.5, .vibi-traffic-chart.py-1\.5 {
+  padding-block: calc(var(--spacing) * 1.5);
+}
+.vibi-traffic-chart .py-2, .vibi-traffic-chart.py-2 {
+  padding-block: calc(var(--spacing) * 2);
+}
+.vibi-traffic-chart .pb-1\.5, .vibi-traffic-chart.pb-1\.5 {
+  padding-bottom: calc(var(--spacing) * 1.5);
+}
+.vibi-traffic-chart .pb-2, .vibi-traffic-chart.pb-2 {
+  padding-bottom: calc(var(--spacing) * 2);
+}
+.vibi-traffic-chart .font-mono, .vibi-traffic-chart.font-mono {
+  font-family: var(--font-mono);
+}
+.vibi-traffic-chart .text-sm, .vibi-traffic-chart.text-sm {
+  font-size: var(--text-sm);
+  line-height: var(--tw-leading, var(--text-sm--line-height));
+}
+.vibi-traffic-chart .text-xs, .vibi-traffic-chart.text-xs {
+  font-size: var(--text-xs);
+  line-height: var(--tw-leading, var(--text-xs--line-height));
+}
+.vibi-traffic-chart .text-\[8px\], .vibi-traffic-chart.text-\[8px\] {
+  font-size: 8px;
+}
+.vibi-traffic-chart .text-\[9px\], .vibi-traffic-chart.text-\[9px\] {
+  font-size: 9px;
+}
+.vibi-traffic-chart .text-\[10px\], .vibi-traffic-chart.text-\[10px\] {
+  font-size: 10px;
+}
+.vibi-traffic-chart .text-\[11\.5px\], .vibi-traffic-chart.text-\[11\.5px\] {
+  font-size: 11.5px;
+}
+.vibi-traffic-chart .text-\[11px\], .vibi-traffic-chart.text-\[11px\] {
+  font-size: 11px;
+}
+.vibi-traffic-chart .text-\[14px\], .vibi-traffic-chart.text-\[14px\] {
+  font-size: 14px;
+}
+.vibi-traffic-chart .font-bold, .vibi-traffic-chart.font-bold {
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+}
+.vibi-traffic-chart .font-medium, .vibi-traffic-chart.font-medium {
+  --tw-font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-medium);
+}
+.vibi-traffic-chart .font-semibold, .vibi-traffic-chart.font-semibold {
+  --tw-font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-semibold);
+}
+.vibi-traffic-chart .whitespace-nowrap, .vibi-traffic-chart.whitespace-nowrap {
+  white-space: nowrap;
+}
+.vibi-traffic-chart .text-\[\#fc1c49\], .vibi-traffic-chart.text-\[\#fc1c49\] {
+  color: #fc1c49;
+}
+.vibi-traffic-chart .text-amber-600, .vibi-traffic-chart.text-amber-600 {
+  color: var(--color-amber-600);
+}
+.vibi-traffic-chart .text-amber-700, .vibi-traffic-chart.text-amber-700 {
+  color: var(--color-amber-700);
+}
+.vibi-traffic-chart .text-blue-500, .vibi-traffic-chart.text-blue-500 {
+  color: var(--color-blue-500);
+}
+.vibi-traffic-chart .text-gray-300, .vibi-traffic-chart.text-gray-300 {
+  color: var(--color-gray-300);
+}
+.vibi-traffic-chart .text-gray-400, .vibi-traffic-chart.text-gray-400 {
+  color: var(--color-gray-400);
+}
+.vibi-traffic-chart .text-gray-500, .vibi-traffic-chart.text-gray-500 {
+  color: var(--color-gray-500);
+}
+.vibi-traffic-chart .text-gray-700, .vibi-traffic-chart.text-gray-700 {
+  color: var(--color-gray-700);
+}
+.vibi-traffic-chart .text-gray-900, .vibi-traffic-chart.text-gray-900 {
+  color: var(--color-gray-900);
+}
+.vibi-traffic-chart .text-green-600, .vibi-traffic-chart.text-green-600 {
+  color: var(--color-green-600);
+}
+.vibi-traffic-chart .text-white, .vibi-traffic-chart.text-white {
+  color: var(--color-white);
+}
+.vibi-traffic-chart .text-yellow-300, .vibi-traffic-chart.text-yellow-300 {
+  color: var(--color-yellow-300);
+}
+.vibi-traffic-chart .text-yellow-600, .vibi-traffic-chart.text-yellow-600 {
+  color: var(--color-yellow-600);
+}
+.vibi-traffic-chart .shadow-2xl, .vibi-traffic-chart.shadow-2xl {
+  --tw-shadow: 0 25px 50px -12px var(--tw-shadow-color, rgb(0 0 0 / 0.25));
+  box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+.vibi-traffic-chart .shadow-sm, .vibi-traffic-chart.shadow-sm {
+  --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+  box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+.vibi-traffic-chart .backdrop-blur-sm, .vibi-traffic-chart.backdrop-blur-sm {
+  --tw-backdrop-blur: blur(var(--blur-sm));
+  -webkit-backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
+  backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
+}
+.vibi-traffic-chart .transition-all, .vibi-traffic-chart.transition-all {
+  transition-property: all;
+  transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+  transition-duration: var(--tw-duration, var(--default-transition-duration));
+}
+.vibi-traffic-chart .duration-75, .vibi-traffic-chart.duration-75 {
+  --tw-duration: 75ms;
+  transition-duration: 75ms;
+}
+.vibi-traffic-chart .select-none, .vibi-traffic-chart.select-none {
+  -webkit-user-select: none;
+  user-select: none;
+}
+@media (width >= 40rem) {
+  .vibi-traffic-chart .sm\:col-span-1, .vibi-traffic-chart.sm\:col-span-1 {
+    grid-column: span 1 / span 1;
+  }
+  .vibi-traffic-chart .sm\:block, .vibi-traffic-chart.sm\:block {
+    display: block;
+  }
+  .vibi-traffic-chart .sm\:hidden, .vibi-traffic-chart.sm\:hidden {
+    display: none;
+  }
+  .vibi-traffic-chart .sm\:h-2\.5, .vibi-traffic-chart.sm\:h-2\.5 {
+    height: calc(var(--spacing) * 2.5);
+  }
+  .vibi-traffic-chart .sm\:w-2\.5, .vibi-traffic-chart.sm\:w-2\.5 {
+    width: calc(var(--spacing) * 2.5);
+  }
+  .vibi-traffic-chart .sm\:grid-cols-3, .vibi-traffic-chart.sm\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .vibi-traffic-chart .sm\:p-4, .vibi-traffic-chart.sm\:p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .vibi-traffic-chart .sm\:p-6, .vibi-traffic-chart.sm\:p-6 {
+    padding: calc(var(--spacing) * 6);
+  }
+  .vibi-traffic-chart .sm\:text-lg, .vibi-traffic-chart.sm\:text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .vibi-traffic-chart .sm\:text-xs, .vibi-traffic-chart.sm\:text-xs {
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+  .vibi-traffic-chart .sm\:text-\[10px\], .vibi-traffic-chart.sm\:text-\[10px\] {
+    font-size: 10px;
+  }
+  .vibi-traffic-chart .sm\:text-\[11px\], .vibi-traffic-chart.sm\:text-\[11px\] {
+    font-size: 11px;
+  }
+  .vibi-traffic-chart .sm\:text-\[16px\], .vibi-traffic-chart.sm\:text-\[16px\] {
+    font-size: 16px;
+  }
+}
+@media (width >= 64rem) {
+  .vibi-traffic-chart .lg\:grid-cols-5, .vibi-traffic-chart.lg\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-pan-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-pan-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-pinch-zoom {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-space-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-backdrop-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-duration {
+  syntax: "*";
+  inherits: false;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+@supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    .vibi-traffic-chart *, .vibi-traffic-chart ::before, .vibi-traffic-chart ::after, .vibi-traffic-chart ::backdrop {
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
+      --tw-pan-x: initial;
+      --tw-pan-y: initial;
+      --tw-pinch-zoom: initial;
+      --tw-space-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-font-weight: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-backdrop-blur: initial;
+      --tw-backdrop-brightness: initial;
+      --tw-backdrop-contrast: initial;
+      --tw-backdrop-grayscale: initial;
+      --tw-backdrop-hue-rotate: initial;
+      --tw-backdrop-invert: initial;
+      --tw-backdrop-opacity: initial;
+      --tw-backdrop-saturate: initial;
+      --tw-backdrop-sepia: initial;
+      --tw-duration: initial;
+    }
+  }

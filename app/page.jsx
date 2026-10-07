@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
+import { readJourney,track } from '../lib/attribution';
 
 const features = [
   ['01','김해공항 가까이, 편안한 출발','공항 근처 형제주차장에 차를 세우고 가벼운 마음으로 여행을 시작하세요.\n처음 방문하셔도 입차 방법을 차근차근 안내해 드립니다.','/airport-parking-hero.webp','공항 주차를 표현한 연출 이미지'],
@@ -40,12 +41,16 @@ function AnimatedPrice({ target }) {
   },[target]);
   return <strong ref={numberRef}>{value.toLocaleString('ko-KR')}</strong>;
 }
-export default function HomePage() {
+export default function HomePage({reservationOnly=false}) {
   const [menuOpen,setMenuOpen] = useState(false);
   const [showScrollCue,setShowScrollCue] = useState(true);
   const [showFloatingCall,setShowFloatingCall] = useState(true);
   const [statusMessage,setStatusMessage] = useState('예약 신청 후 담당자의 확정 안내를 확인해 주세요.');
   const [statusError,setStatusError] = useState(false);
+  const [submitting,setSubmitting] = useState(false);
+  const [receipt,setReceipt] = useState(null);
+  const submittingRef=useRef(false);
+  const bookingKey=useRef(null);
   useEffect(()=>{
     const updateCue=()=>setShowScrollCue(window.scrollY<24);
     updateCue();
@@ -70,6 +75,7 @@ export default function HomePage() {
   },[]);
   async function handleSubmit(event) {
     event.preventDefault();
+    if(submittingRef.current)return;
     const form=event.currentTarget, values=Object.fromEntries(new FormData(form));
     const missingField=['name','phone','dest','plate','car'].find(key=>!String(values[key]??'').trim());
     if (missingField) {form.elements[missingField].focus();setStatusError(true);setStatusMessage('필수 항목을 모두 입력해 주세요.');return;}
@@ -79,29 +85,33 @@ export default function HomePage() {
     if (Math.ceil((exit-entry)/86400000)<3) {setStatusError(true);setStatusMessage('온라인 예약은 3일 이상부터 가능합니다.');return;}
     const [inDate,inTime]=values.entry.split('T'),[outDate,outTime]=values.exit.split('T');
     const data={name:values.name.trim(),phone:values.phone.trim(),route:values.route,dest:values.dest.trim(),plate:values.plate.trim(),car:values.car.trim(),people:values.people,golf:values.golf,note:values.note.trim(),inDate,inTime,outDate,outTime,createdAt:Date.now(),status:'접수대기'};
-    const submit=form.querySelector('button[type=submit]');
-    submit.disabled=true;setStatusError(false);setStatusMessage('예약을 접수하고 있습니다…');
-    try {const result=await supabase.rpc('create_reservation',{p_data:data});if(result.error)throw result.error;form.reset();setStatusMessage('예약 신청이 접수되었습니다. 확정 안내를 기다려 주세요. 문의: 010-5700-7884');}
-    catch {setStatusError(true);setStatusMessage('접수에 실패했습니다. 010-5700-7884로 전화해 주세요.');}
-    finally {submit.disabled=false;}
+    submittingRef.current=true;setSubmitting(true);setReceipt(null);setStatusError(false);setStatusMessage('예약 신청을 전달하고 있습니다…');
+    bookingKey.current=bookingKey.current||crypto.randomUUID();
+    const payload={...data,consent:values.consent==='on',...readJourney()};
+    const request=api('reservations',{method:'POST',headers:{'Idempotency-Key':bookingKey.current},body:JSON.stringify(payload)});
+    setTimeout(()=>track('reservation_submit'),0);
+    try {const result=await request;bookingKey.current=null;form.reset();setReceipt({id:result.id,name:data.name});setStatusMessage('예약 신청이 접수되었습니다. 담당자의 확정 안내를 기다려 주세요.');setTimeout(()=>track('reservation_complete'),0);}
+    catch(error) {track('reservation_error');setStatusError(true);setStatusMessage(error.message+' 문의: 010-5700-7884');}
+    finally {submittingRef.current=false;setSubmitting(false);}
   }
   return <>
     <header className="site-header"><div className="header-inner">
-      <a className="logo" href="#top" aria-label="형제주차장 홈"><span className="logo-symbol">P<img src="/logo-airplane.webp" alt=""/></span><span className="logo-type">형제주차장<small>HYEONGJE PARKING</small></span></a>
+      <a className="logo" href="/" aria-label="형제주차장 홈"><span className="logo-symbol">P<img src="/logo-airplane.webp" alt=""/></span><span className="logo-type">형제주차장<small>HYEONGJE PARKING</small></span></a>
       <nav className={menuOpen?'site-nav open':'site-nav'} aria-label="주요 메뉴">
-        {['회사소개','이용안내','요금안내','예약하기','주차장시설','고객지원'].map((label,i)=><a key={label} onClick={()=>setMenuOpen(false)} href={['#about','#guide','#pricing','#reservation','#facilities','#faq'][i]}>{label}</a>)}
+        {['회사소개','이용안내','요금안내','예약하기','주차장시설','고객지원'].map((label,i)=><a key={label} onClick={()=>setMenuOpen(false)} href={['/about','/guide','/pricing','/reservation','/facilities','/faq'][i]}>{label}</a>)}
       </nav><a className="header-call" href="tel:01057007884">전화 상담&nbsp; 010-5700-7884</a>
       <button className="menu-toggle" aria-label={menuOpen?'메뉴 닫기':'메뉴 열기'} aria-expanded={menuOpen} onClick={()=>setMenuOpen(!menuOpen)}><img src={menuOpen?'/icon-close.webp':'/icon-menu.webp'} alt=""/></button>
     </div></header>
     <main id="top">
-      <section className="hero"><div className="hero-content"><p>여행의 시작부터 끝까지,<br/>김해공항 주차의 편안한 선택</p><h1>HYEONGJE PARKING</h1><a className="primary-button" href="#reservation">온라인 예약하기 <img className="button-icon" src="/icon-arrow.webp" alt=""/></a></div><a className={showScrollCue?'scroll-cue':'scroll-cue hidden'} href="#about" aria-label="아래로 스크롤하여 소개 보기"><span className="scroll-label">SCROLL TO EXPLORE</span><span className="mouse-scene" aria-hidden="true"><span className="mouse-shell"><span className="mouse-seam"/><span className="mouse-wheel"/></span><span className="mouse-shadow"/></span><img className="scroll-chevron" src="/icon-chevron.webp" alt=""/></a></section>
+      {!reservationOnly&&<><section className="hero"><div className="hero-content"><p>여행의 시작부터 끝까지,<br/>김해공항 주차의 편안한 선택</p><h1>HYEONGJE PARKING</h1><a className="primary-button" href="#reservation">온라인 예약하기 <img className="button-icon" src="/icon-arrow.webp" alt=""/></a></div><a className={showScrollCue?'scroll-cue':'scroll-cue hidden'} href="#about" aria-label="아래로 스크롤하여 소개 보기"><span className="scroll-label">SCROLL TO EXPLORE</span><span className="mouse-scene" aria-hidden="true"><span className="mouse-shell"><span className="mouse-seam"/><span className="mouse-wheel"/></span><span className="mouse-shadow"/></span><img className="scroll-chevron" src="/icon-chevron.webp" alt=""/></a></section>
       <section className="intro" id="about"><span className="eyebrow">김해공항 주차의 편안한 시작</span><h2>공항까지 가볍게,<br/>주차는 형제주차장에</h2><p>여행 전 주차부터 귀국 후 차량 인수까지<br/>믿고 맡길 수 있도록 정성을 다하겠습니다.</p></section>
       <section className="feature-list" id="guide" aria-label="형제주차장 이용 장점">{features.map(([num,title,description,image,alt])=><article className="feature-row" key={num}><div className="feature-copy"><span className="feature-number">{num}</span><h3>{title}</h3><p>{description}</p></div><div className="feature-image"><img src={image} alt={alt}/></div></article>)}</section>
       <section className="pricing" id="pricing"><div className="section-heading"><span className="eyebrow">PARKING PRICE</span><h2>명확한 주차 요금</h2><p>이용 일정을 확인하고 안내해 드립니다.</p></div><div className="price-grid"><article className="price-card"><span>WEEKDAY</span><h3>월요일 — 목요일</h3><div className="price"><AnimatedPrice target={9000}/>원 <small>/ 1일</small></div></article><article className="price-card"><span>WEEKEND</span><h3>금요일 — 일요일</h3><div className="price"><AnimatedPrice target={10000}/>원 <small>/ 1일</small></div></article></div><p className="price-note">정확한 총 요금과 공휴일 적용 요금은 예약 확정 시 안내드립니다.</p></section>
       <section className="how-to"><div className="section-heading"><span className="eyebrow">HOW TO USE</span><h2>이용 방법</h2><p>예약부터 귀국까지, 간단하게 이용하세요.</p></div><div className="how-grid">{[['온라인 예약','이용 일정과 차량 정보를 입력하고 예약을 신청하세요.'],['주차장 방문','확정 안내를 확인한 뒤 형제주차장으로 방문하세요.'],['무료 셔틀 이용','주차를 마치고 셔틀로 김해공항까지 이동하세요.'],['귀국 후 차량 인수','도착 후 전화 주시면 돌아오는 길을 안내해 드립니다.']].map(([title,copy],i)=><article key={title}><span>0{i+1}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></section>
       <section className="facilities" id="facilities"><div className="section-heading"><span className="eyebrow">OUR PARKING LOT</span><h2>형제주차장 둘러보기</h2><p>실제 셔틀 차량과 주차장 설비를 확인하세요.</p></div><div className="gallery"><img src="/parking-4.jpg" alt="형제주차장 무료 셔틀 차량"/><img src="/parking-3.jpg" alt="형제주차장 CCTV 설비"/><a className="map-link" href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EA%B0%95%EC%84%9C%EA%B5%AC%20%EB%8C%80%EC%A0%802%EB%8F%99%202432-4" target="_blank" rel="noopener noreferrer" aria-label="형제주차장 위치 네이버 지도에서 보기"><img src="/parking-5.jpg" alt="형제주차장 위치 안내 지도"/><small>클릭 시 네이버 지도로 이동합니다.</small></a></div></section>
-      <section className="booking" id="reservation"><div className="booking-intro"><span className="eyebrow">ONLINE RESERVATION</span><h2>여행 준비의 시작,<br/>지금 예약하세요.</h2><p>필요한 정보를 남겨주시면 확인 후 연락드리겠습니다. 담당자의 안내를 받으신 뒤 예약이 확정됩니다.</p><div className="booking-info"><strong>운영시간</strong><span>매일 04:40 – 21:30</span><strong>전화문의</strong><a href="tel:01057007884">010-5700-7884</a></div></div>
-      <form className="booking-form" onSubmit={handleSubmit}><h3>온라인 예약 신청</h3><p>별표 표시 항목을 입력해 주세요.</p>
+      </>}{reservationOnly&&<h1 className="booking-page-title">김해공항 주차 온라인 예약</h1>}<section className="booking" id="reservation"><div className="booking-intro"><span className="eyebrow">ONLINE RESERVATION</span><h2>여행 준비의 시작,<br/>지금 예약하세요.</h2><p>필요한 정보를 남겨주시면 확인 후 연락드리겠습니다. 담당자의 안내를 받으신 뒤 예약이 확정됩니다.</p><div className="booking-info"><strong>운영시간</strong><span>매일 04:40 – 21:30</span><strong>전화문의</strong><a href="tel:01057007884">010-5700-7884</a></div></div>
+      <form className="booking-form" onSubmit={handleSubmit} aria-busy={submitting}><h3>온라인 예약 신청</h3><p>별표 표시 항목을 입력해 주세요.</p>
+        {(submitting||receipt)&&<div className="booking-receipt" role="status">{submitting?<><span className="booking-spinner"/><div><strong>예약 접수 중</strong><span>잠시만 기다려 주세요.</span></div></>:<><span className="booking-check">✓</span><div><strong>{receipt.name}님, 예약 신청이 접수되었습니다.</strong><span>담당자가 확인한 후 확정 안내를 드립니다.</span><small>접수번호 {receipt.id.slice(0,8).toUpperCase()}</small></div></>}</div>}
         <div className="field-row"><label>예약자명 *<input name="name" autoComplete="name" required placeholder="예약자 성함" maxLength="40"/></label><label>휴대폰 번호 *<input name="phone" type="tel" autoComplete="tel" inputMode="tel" required pattern="01[0-9](-| )?[0-9]{3,4}(-| )?[0-9]{4}" title="휴대폰 번호를 010-1234-5678 형식으로 입력해 주세요." placeholder="010-0000-0000" maxLength="20"/></label></div>
         <div className="field-row"><label>입차 예정 *<input name="entry" type="datetime-local" required/></label><label>출차 예정 *<input name="exit" type="datetime-local" required/></label></div>
         <div className="field-row"><label>항공노선 *<select name="route" required><option value="국제선">국제선</option><option value="국내선">국내선</option></select></label><label>여행지 *<input name="dest" required placeholder="예: 일본" maxLength="50"/></label></div>
@@ -109,12 +119,12 @@ export default function HomePage() {
         <div className="field-row"><label>탑승 인원 *<input name="people" type="number" min="1" max="20" required placeholder="인원수"/></label><label>골프백 개수<select name="golf"><option value="0">0개</option><option value="1">1개</option><option value="2">2개</option><option value="3">3개</option><option value="4">4개</option></select></label></div>
         <label>요청사항<textarea name="note" rows="3" placeholder="필요한 내용을 남겨 주세요"/></label>
         <div className="agree-row"><label className="agree"><input name="consent" type="checkbox" required/><span>예약 접수를 위한 개인정보 수집·이용에 동의합니다.</span></label><a className="privacy-link" href="/privacy" target="_blank" rel="noopener noreferrer">개인정보 처리방침 보기</a></div>
-        <button className="primary-button submit" type="submit">예약 신청하기 <img className="button-icon" src="/icon-arrow.webp" alt=""/></button><p className={statusError?'form-note error':'form-note'} role="status">{statusMessage}</p>
+        <button className="primary-button submit" type="submit" disabled={submitting}>{submitting?'접수 중…':'예약 신청하기'} <img className="button-icon" src="/icon-arrow.webp" alt=""/></button><p className={statusError?'form-note error':'form-note'} role="status">{statusMessage}</p>
       </form></section>
-      <section className="faq" id="faq"><div className="section-heading"><span className="eyebrow">FAQ</span><h2>자주 묻는 질문</h2><p>궁금한 내용을 확인해 보세요.</p></div><div className="faq-list">{faqs.map(([q,a])=><details key={q}><summary>{q}<img className="faq-plus" src="/icon-plus.webp" alt=""/></summary><p>{a}</p></details>)}</div></section>
+      {!reservationOnly&&<><section className="faq" id="faq"><div className="section-heading"><span className="eyebrow">FAQ</span><h2>자주 묻는 질문</h2><p>궁금한 내용을 확인해 보세요.</p></div><div className="faq-list">{faqs.map(([q,a])=><details key={q}><summary>{q}<img className="faq-plus" src="/icon-plus.webp" alt=""/></summary><p>{a}</p></details>)}</div></section>
       <section className="closing"><h2>여행의 시작도 끝도,<br/>형제주차장과 함께</h2><a className="primary-button" href="#reservation">온라인 예약하기 <img className="button-icon" src="/icon-arrow.webp" alt=""/></a></section>
-    </main>
-    <footer className="footer"><div className="footer-inner"><div><a className="footer-logo" href="#top">형제주차장 <small>HYEONGJE PARKING</small></a><p>부산광역시 강서구 대저2동 2432-4<br/>운영시간 04:40 – 21:30</p><a className="footer-privacy" href="/privacy">개인정보 처리방침</a></div><div><strong>고객센터</strong><a className="footer-phone" href="tel:01057007884">010-5700-7884</a><p>예약 및 이용 문의는 전화로 연락해 주세요.<br/><a className="footer-admin" href="/admin">관리자 페이지</a></p></div></div><div className="copyright">© 2026 HYEONGJE PARKING. ALL RIGHTS RESERVED.</div></footer>
+</>}    </main>
+    <footer className="footer"><div className="footer-inner"><div><a className="footer-logo" href="/">형제주차장 <small>HYEONGJE PARKING</small></a><p>부산광역시 강서구 대저2동 2432-4<br/>운영시간 04:40 – 21:30</p><nav className="footer-pages" aria-label="사이트 안내">{[["/about","회사소개"],["/guide","이용안내"],["/pricing","요금안내"],["/reservation","온라인예약"],["/facilities","주차장시설"],["/faq","자주 묻는 질문"]].map(([href,title])=><a key={href} href={href}>{title}</a>)}</nav><a className="footer-privacy" href="/privacy">개인정보 처리방침</a></div><div><strong>고객센터</strong><a className="footer-phone" href="tel:01057007884">010-5700-7884</a><p>예약 및 이용 문의는 전화로 연락해 주세요.<br/><a className="footer-admin" href="/admin">관리자 페이지</a></p></div></div><div className="copyright">© 2026 HYEONGJE PARKING. ALL RIGHTS RESERVED.</div></footer>
     <a className={showFloatingCall?'floating-call':'floating-call is-hidden'} href="tel:01057007884" aria-hidden={!showFloatingCall} tabIndex={showFloatingCall?undefined:-1}><img className="support-icon" src="/support-headset.webp" alt=""/>상담원 연결</a>
   </>;
 }

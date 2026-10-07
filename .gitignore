@@ -8,3 +8,5 @@ dist/
 .vercel
 .env*
 .vercel-cli/
+.migration/
+.wrangler/

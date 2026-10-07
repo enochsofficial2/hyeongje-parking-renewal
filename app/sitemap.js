@@ -1,0 +1,1 @@
+export default function sitemap(){return ['','/about','/guide','/pricing','/reservation','/facilities','/faq','/privacy'].map(path=>({url:'https://www.hjairport.com'+path,changeFrequency:path?'monthly':'weekly',priority:path?0.8:1}))}
