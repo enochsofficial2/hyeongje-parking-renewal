@@ -31,7 +31,9 @@ Vercel의 Next.js 프레임워크 프리셋으로 배포합니다. 빌드 명령
 
 ## 예약 알림 연동
 
-고객·관리자 카카오 알림톡은 아직 연결되지 않았습니다. 솔라피의 형제주차장 발신 프로필, 승인된 고객/관리자 템플릿, API 인증 정보와 개인정보 처리 정책이 준비되면 별도 서버 API로 연결해야 합니다.
+예약 저장과 동시에 D1 트리거가 신청자·운영자 알림톡 작업을 생성합니다. 프론트 응답 후 Workers waitUntil에서 SOLAPI로 발송 요청하며, 매분 Cron이 남은 대기 작업을 처리합니다. 동일 예약·수신 역할은 한 번만 생성하고 원자적 상태 전환으로 동시 발송을 방지합니다. 응답이 불명확한 작업은 unknown으로 남겨 중복 재발송하지 않습니다. 과거 예약에는 자동 발송하지 않습니다. 예약 상세에서 역할별 요청 결과를 확인할 수 있으며, accepted는 SOLAPI 접수 상태이고 실제 배달 결과는 SOLAPI 발송 내역에서 확인합니다.
+
+Workers Secret은 SOLAPI_API_KEY와 SOLAPI_API_SECRET입니다. 채널·템플릿·운영자 수신번호는 cloudflare/wrangler.jsonc의 SOLAPI_* 설정을 사용합니다. 운영자 수신번호는 01028961999입니다. 알림톡 실패 시 SMS 대체 발송은 비활성화돼 있습니다. 승인된 템플릿과 SOLAPI 잔액이 필요합니다.
 
 
 ## 보고서와 검색 등록
@@ -39,3 +41,4 @@ Vercel의 Next.js 프레임워크 프리셋으로 배포합니다. 빌드 명령
 GA4 Data API 보고서는 Workers의 `GA_CLIENT_EMAIL`, `GA_PRIVATE_KEY` 비밀키와 `GA_PROPERTY_ID`로 읽습니다. 서비스 계정에는 해당 속성 뷰어 권한이 필요합니다. 자체 체류시간은 화면 표시·초점 상태만 15초 간격으로 기록합니다. GA4는 자체 user_engagement와 보고서의 userEngagementDuration을 사용합니다.
 
 검색용 독립 주소는 `/about`, `/guide`, `/pricing`, `/reservation`, `/facilities`, `/faq`입니다. robots.txt와 sitemap.xml, 고정 favicon.ico/favicon.png, WebSite/LocalBusiness/BreadcrumbList 구조화 데이터를 제공합니다. 네이버 소유 확인 메타 태그를 배포했습니다. 사이트링크와 파비콘 검색 노출은 검색엔진의 재수집·선택에 따릅니다.
+

@@ -1,4 +1,5 @@
 import {ga4} from './ga4.js';
+import {dispatchNotifications,notificationConfig} from './notifications.js';
 const statuses=['접수대기','확정','이용완료','취소'];
 const json=(data,status=200,headers={})=>Response.json(data,{status,headers:{'Cache-Control':'no-store',...headers}});
 const fail=(message,status=400)=>{throw Object.assign(new Error(message),{status});};
@@ -78,6 +79,7 @@ async function handle(request,env,ctx){
   if(data.consent!==true)fail('개인정보 수집·이용 동의가 필요합니다.');
   const id=crypto.randomUUID(),j=journey(data.journey);
   const saved=await env.DB.prepare('INSERT INTO reservations(id,created_at,name,phone,route,dest,plate,car,people,golf,note,in_date,in_time,out_date,out_time,status,visitor_id,session_id,journey,idempotency_key) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(idempotency_key) DO UPDATE SET id=reservations.id RETURNING id').bind(id,iso(),clean(data.name,40).trim(),clean(data.phone,20),clean(data.route,30),clean(data.dest,100),clean(data.plate,30),clean(data.car,80),people,golf,clean(data.note,2000),clean(data.inDate,10),clean(data.inTime,5),clean(data.outDate,10),clean(data.outTime,5),'접수대기',uuid(data.visitorId),uuid(data.sessionId),j?JSON.stringify(j):null,key).first();
+  ctx.waitUntil(dispatchNotifications(env,saved.id).catch(()=>console.error('Notification processing interrupted')));
   return json({id:saved.id},201);
  }
  if(path==='/api/track'&&request.method==='POST'){
@@ -103,7 +105,9 @@ async function handle(request,env,ctx){
   const {where,values}=filters(url),page=Math.max(1,Number(url.searchParams.get('page'))||1),size=Math.min(200,Math.max(1,Number(url.searchParams.get('size'))||50));
   const total=await env.DB.prepare('SELECT count(*) AS n FROM reservations'+where).bind(...values).first();
   const {results}=await env.DB.prepare('SELECT * FROM reservations'+where+' ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?').bind(...values,size,(page-1)*size).all();
-  return json({rows:results.map(r=>({...r,journey:parse(r.journey)})),total:total.n,page,size});
+  const ids=results.map(r=>r.id);
+  const notices=[];for(let start=0;start<ids.length;start+=80){const chunk=ids.slice(start,start+80);notices.push(...(await env.DB.prepare('SELECT reservation_id,recipient_role,status,updated_at,error_code,group_id,message_id FROM reservation_notifications WHERE reservation_id IN ('+chunk.map(()=>'?').join(',')+')').bind(...chunk).all()).results)}
+  return json({rows:results.map(r=>({...r,journey:parse(r.journey),notifications:notices.filter(n=>n.reservation_id===r.id)})),total:total.n,page,size});
  }
  if(path.startsWith('/api/admin/reservations/')){
   const id=path.split('/').pop();
@@ -143,7 +147,7 @@ async function handle(request,env,ctx){
  }
  if(path==='/api/admin/ga4')return json(await ga4(env,url.searchParams.get('from'),url.searchParams.get('to')));
  if(path==='/api/admin/settings'){
-  const settings=await env.DB.prepare('SELECT * FROM settings').all();return json({settings:Object.fromEntries(settings.results.map(x=>[x.key,x.value])),storage:!!env.STORAGE,backend:'Cloudflare Workers · D1',user});
+  const settings=await env.DB.prepare('SELECT * FROM settings').all();return json({settings:Object.fromEntries(settings.results.map(x=>[x.key,x.value])),storage:!!env.STORAGE,notifications:notificationConfig(env),backend:'Cloudflare Workers · D1',user});
  }
  if(path==='/api/admin/media'){
   if(request.method==='GET')return json({rows:(await env.DB.prepare('SELECT * FROM media ORDER BY created_at DESC').all()).results,enabled:!!env.STORAGE});
@@ -168,5 +172,5 @@ async function handle(request,env,ctx){
 }
 export default {
  async fetch(request,env,ctx){try{return await handle(request,env,ctx)}catch(error){if(!error.status)console.error('API failure',error.message);return json({error:error.status?error.message:'처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.'},error.status||500)}},
- async scheduled(_event,env){await env.DB.batch([env.DB.prepare('DELETE FROM admin_sessions WHERE expires_at<?').bind(Date.now()),env.DB.prepare('DELETE FROM rate_limits WHERE expires_at<?').bind(Date.now()),env.DB.prepare("DELETE FROM events WHERE julianday(created_at)<julianday('now','-90 days')"),env.DB.prepare("DELETE FROM visits WHERE julianday(created_at)<julianday('now','-90 days')")])}
+ async scheduled(event,env){if(event.cron==='*/1 * * * *'){await dispatchNotifications(env);return}await env.DB.batch([env.DB.prepare('DELETE FROM admin_sessions WHERE expires_at<?').bind(Date.now()),env.DB.prepare('DELETE FROM rate_limits WHERE expires_at<?').bind(Date.now()),env.DB.prepare("DELETE FROM events WHERE julianday(created_at)<julianday('now','-90 days')"),env.DB.prepare("DELETE FROM visits WHERE julianday(created_at)<julianday('now','-90 days')")])}
 };

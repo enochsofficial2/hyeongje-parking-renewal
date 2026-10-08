@@ -21,14 +21,19 @@
   ],
   "vars": {
     "SITE_ORIGIN": "https://www.hjairport.com",
-    "GA_PROPERTY_ID": "555951406"
+    "GA_PROPERTY_ID": "555951406",
+    "SOLAPI_PF_ID": "KA01PF261002075358931Z0HhRSc8vw4",
+    "SOLAPI_CUSTOMER_TEMPLATE": "KA01TP261007134318750Z6r9qRoqWVp",
+    "SOLAPI_OPERATOR_TEMPLATE": "KA01TP261007134729327Y1tEtXZr6nD",
+    "SOLAPI_OPERATOR_PHONE": "01028961999"
   },
   "observability": {
     "enabled": true
   },
   "triggers": {
     "crons": [
-      "0 19 * * *"
+      "0 19 * * *",
+      "*/1 * * * *"
     ]
   }
 }
